@@ -7,12 +7,13 @@
 
 import pandas as pd
 import os
+from openpyxl import load_workbook
 
 # 这里需要手动改为绩效表存放位置
-dirPath = r'E:\11月绩效'
+dirPath = r'E:\技术部12月绩效\Android组12月绩效\12月'
 
 # 这里是生成表的名称
-newFileName = r'测试总表'
+newFileName = r'绩效总表'
 
 
 def getFiles():
@@ -47,6 +48,7 @@ def read_from_exc(path):
 
 # 将单独文件中的数据汇总为DataFrame
 def makeFrame():
+
     names = []
     scores = []
     for fileName in getFiles():
@@ -63,7 +65,27 @@ def makeFrame():
 
 # 写入文件
 def dataFrameToFile(df: pd.DataFrame):
-    df.to_excel(dirPath + '\\' + newFileName + '.xlsx')
+    # 打开excel
+    # writer = pd.ExcelWriter(r'E:\绩效总表.xlsx')
+    # df.to_excel(r'E:\绩效总表.xlsx')
+    # writer.save()
+
+    if not os.path.exists(r'E:\绩效总表.xlsx'):
+        nan_excle = pd.DataFrame()
+        nan_excle.to_excel(r'E:\绩效总表.xlsx')
+
+    df1 = pd.DataFrame(pd.read_excel(r'E:\绩效总表.xlsx'))  # 读取原数据文件和表
+    writer = pd.ExcelWriter(r'E:\绩效总表.xlsx', engine='openpyxl')
+    book = load_workbook(r'E:\绩效总表.xlsx')
+    writer.book = book
+    writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
+    df_rows = df1.shape[0]  # 获取原数据的行数
+    df.to_excel(writer, startrow=df_rows + 1, index=False, header=False)  # 将数据写入excel中的aa表,从第一个空行开始写
+    writer.save()  # 保存
 
 
 dataFrameToFile(makeFrame())
+
+# 新需求
+# 总表去重功能
+#
