@@ -10,7 +10,7 @@ import os
 from openpyxl import load_workbook
 
 # 这里需要手动改为绩效表存放位置
-dirPath = r'E:\技术部12月绩效\Android组12月绩效\12月'
+dirPath = r'E:\技术部12月绩效(1)\AI项目组12月绩效\AI项目组12月绩效\前端'
 
 # 这里是生成表的名称
 newFileName = r'绩效总表'
@@ -65,11 +65,6 @@ def makeFrame():
 
 # 写入文件
 def dataFrameToFile(df: pd.DataFrame):
-    # 打开excel
-    # writer = pd.ExcelWriter(r'E:\绩效总表.xlsx')
-    # df.to_excel(r'E:\绩效总表.xlsx')
-    # writer.save()
-
     if not os.path.exists(r'E:\绩效总表.xlsx'):
         nan_excle = pd.DataFrame()
         nan_excle.to_excel(r'E:\绩效总表.xlsx')
