@@ -5,33 +5,65 @@
 # @File    : TYReadExc.py
 # @Software:
 
-import numpy as np
 import pandas as pd
+import os
+
+# 这里需要手动改为绩效表存放位置
+dirPath = r'E:\11月绩效'
+
+# 这里是生成表的名称
+newFileName = r'测试总表'
 
 
-# 读取文件
+def getFiles():
+    fileNames = os.listdir(dirPath)
+    allfile = []
+    for file in fileNames:
+        allfile.append(dirPath + '\\' + file)
+    return allfile
+
+
+# 从单独文件中获取需要的内容
 def read_from_exc(path):
-    df = pd.read_excel(r'~/Documents/12月份绩效-田宇.xlsx', sheet_name='Sheet1', parse_dates=True)
-    # print(df.columns)
-    # print(df.loc[[0], ['Unnamed: 2']].values)
-    # print(df.loc[[21], ['Unnamed: 1']].values)
-    print(df.iloc[21])
-    data = df.values
-    # print(data)
-    return data
+    df = pd.read_excel(path, parse_dates=True)
+    name = ''
+    score = ''
+    # 获取每一行的index和对应的内容
+    for index, row in df.iterrows():
+        # 去除NaN
+        row = row.dropna(axis=0)
+        # 获取姓名
+        if '被考核人' in row.values:
+            name = row.values[2]
+            # print(row.values[2])
+
+        if '绩效得分总计' in row.values:
+            score = row.values[1]
+            # print(row.values[1])
+    return [name, score]
 
 
-# 解析数组
-def analusis(data:pd.DataFrame):
-    # 读取二维数组的值
-    for val in data:
-        if '被考核人' in val:
-            # 读取一维数组的值
-            for item in val:
-                print("获取到的所有的值：\n{0}".format(item))
+# print(read_from_exc(''))
+
+# 将单独文件中的数据汇总为DataFrame
+def makeFrame():
+    names = []
+    scores = []
+    for fileName in getFiles():
+        # 获取需要的值
+        res = read_from_exc(fileName)
+        names.append(res[0])
+        scores.append(res[1])
+    nameSeries = pd.Series(names)
+    scoresSeries = pd.Series(scores)
+    d = {'姓名': nameSeries, '绩效': scoresSeries}
+    df = pd.DataFrame(d)
+    return df
 
 
-data = read_from_exc('')
-# analusis(data)
+# 写入文件
+def dataFrameToFile(df: pd.DataFrame):
+    df.to_excel(dirPath + '\\' + newFileName + '.xlsx')
 
-# 绩效得分总计
+
+dataFrameToFile(makeFrame())
