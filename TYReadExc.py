@@ -10,10 +10,10 @@ import os
 from openpyxl import load_workbook
 
 # 这里需要手动改为绩效表存放位置
-dirPath = r'E:\技术部12月绩效(1)\AI项目组12月绩效\AI项目组12月绩效\前端'
+dirPath = r'E:\1月绩效--技术部\运维绩效'
 
 # 这里是生成表的名称
-newFileName = r'绩效总表'
+newFileName = r'E:\绩效总表.xlsx'
 
 
 def getFiles():
@@ -65,13 +65,13 @@ def makeFrame():
 
 # 写入文件
 def dataFrameToFile(df: pd.DataFrame):
-    if not os.path.exists(r'E:\绩效总表.xlsx'):
+    if not os.path.exists(newFileName):
         nan_excle = pd.DataFrame()
-        nan_excle.to_excel(r'E:\绩效总表.xlsx')
+        nan_excle.to_excel(newFileName)
 
-    df1 = pd.DataFrame(pd.read_excel(r'E:\绩效总表.xlsx'))  # 读取原数据文件和表
-    writer = pd.ExcelWriter(r'E:\绩效总表.xlsx', engine='openpyxl')
-    book = load_workbook(r'E:\绩效总表.xlsx')
+    df1 = pd.DataFrame(pd.read_excel(newFileName))  # 读取原数据文件和表
+    writer = pd.ExcelWriter(newFileName, engine='openpyxl')
+    book = load_workbook(newFileName)
     writer.book = book
     writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
     df_rows = df1.shape[0]  # 获取原数据的行数
